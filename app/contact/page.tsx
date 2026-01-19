@@ -18,7 +18,7 @@ export default function ContactPage() {
                             Have questions or suggestions? Reach out to our support team.
                         </p>
                         <a href="mailto:support@example.com" className="text-primary hover:underline font-medium">
-                            support@example.com
+                            priyanshudutta@zohomail.in
                         </a>
                     </CardContent>
                 </Card>
