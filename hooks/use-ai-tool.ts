@@ -32,8 +32,26 @@ export function useAiTool<T>({ apiEndpoint = '/api/chat', systemPrompt }: UseAiT
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            setData(result);
+            const apiResponse = await response.json();
+            console.log('Raw API Response:', apiResponse);
+
+            let parsedData = apiResponse;
+
+            // Handle { result: "stringified json" } format
+            if (apiResponse.result && typeof apiResponse.result === 'string') {
+                try {
+                    parsedData = JSON.parse(apiResponse.result);
+                } catch (e) {
+                    console.warn('Failed to parse inner JSON result, using raw string:', e);
+                    parsedData = apiResponse.result; // Fallback to raw string
+                }
+            } else if (apiResponse.result) {
+                // Handle { result: object } format
+                parsedData = apiResponse.result;
+            }
+
+            console.log('Final Parsed Data:', parsedData);
+            setData(parsedData);
         } catch (err: any) {
             console.error('AI Tool Error:', err);
             setError(err.message || 'An unexpected error occurred. Please try again.');

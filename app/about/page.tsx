@@ -22,4 +22,4 @@ export default function AboutPage() {
             </div>
         </div>
     );
-}
+}// Force redeploy – env fix
