@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       model: "llama-3.1-8b-instant",
       messages: messages,
       temperature: 0.7,
-      max_tokens: 1024,
+      max_tokens: 4096,
     });
 
     const result = completion.choices[0]?.message?.content || "";
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ result });
 
   } catch (error: any) {
-    console.error("GROQ API ERROR:", error); 
+    console.error("GROQ API ERROR:", error);
     // Log full object if possible
     if (error?.error) console.error("Full Error Details:", JSON.stringify(error.error, null, 2));
 

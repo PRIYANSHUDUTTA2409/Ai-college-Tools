@@ -40,14 +40,29 @@ export function useAiTool<T>({ apiEndpoint = '/api/chat', systemPrompt }: UseAiT
             // Handle { result: "stringified json" } format
             if (apiResponse.result && typeof apiResponse.result === 'string') {
                 try {
-                    parsedData = JSON.parse(apiResponse.result);
+                    // Fuzzy match JSON object or array to ignore pre/postamble
+                    const match = apiResponse.result.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+                    const jsonStr = match ? match[0] : apiResponse.result.replace(/```json|```/g, '');
+
+                    parsedData = JSON.parse(jsonStr);
                 } catch (e) {
                     console.warn('Failed to parse inner JSON result, using raw string:', e);
-                    parsedData = apiResponse.result; // Fallback to raw string
+                    parsedData = apiResponse.result;
                 }
             } else if (apiResponse.result) {
                 // Handle { result: object } format
                 parsedData = apiResponse.result;
+            }
+
+            // Normalization: Ensure we have { items: [...] } structure
+            if (Array.isArray(parsedData)) {
+                parsedData = { items: parsedData };
+            } else if (parsedData && typeof parsedData === 'object' && !parsedData.items) {
+                // If missing 'items', look for any array property
+                const arrayVal = Object.values(parsedData).find(v => Array.isArray(v));
+                if (arrayVal) {
+                    parsedData = { items: arrayVal };
+                }
             }
 
             console.log('Final Parsed Data:', parsedData);

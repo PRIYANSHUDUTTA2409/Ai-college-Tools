@@ -16,14 +16,14 @@ export default function AbstractPage() {
   Output strictly in this JSON format:
   {
     "items": [
-      {
-        "title": "Abstract",
-        "description": "The full abstract text...",
-        "techStack": ["Keyword 1", "Keyword 2", "Keyword 3"]
-      }
-    ]
-  }
-  The abstract should be around 200-300 words, formal, and structured.`;
+    {
+      "title": "Abstract",
+      "description": "The full abstract text. Reuse \\n for newlines. Do NOT use actual line breaks.",
+      "techStack": ["Keyword 1", "Keyword 2", "Keyword 3"]
+    }
+  ]
+}
+The abstract should be around 200-300 words, formal, and structured. IMPORTANT: Return VALID JSON only. Escape all special characters. No trailing commas.`;
 
     const { loading, error, data, generate } = useAiTool<{ items: any[] }>({
         systemPrompt,

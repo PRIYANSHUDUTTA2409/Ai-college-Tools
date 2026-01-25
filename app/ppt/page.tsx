@@ -14,15 +14,15 @@ export default function PPTPage() {
     const systemPrompt = `You are a presentation expert. Create a detailed 10-slide PowerPoint presentation outline for the given project topic.
   Output strictly in this JSON format:
   {
-    "items": [
-      {
-        "title": "Slide Title (e.g., Introduction)",
-        "description": "Bulleted points for the slide content (use - for bullets)",
-        "techStack": ["Visual suggestion: Diagram of X"]
-      }
-    ]
-  }
-  Ensure logical flow: Introduction -> Problem -> Solution -> Methodology -> Results -> Conclusion.`;
+  "items": [
+    {
+      "title": "Slide Title",
+      "description": "Content here. Use \\n for line breaks, do NOT use actual newlines.",
+      "techStack": ["Visual suggestion"]
+    }
+  ]
+}
+Ensure logical flow. IMPORTANT: Return VALID JSON only. Escape all special characters. No trailing commas.`;
 
     const { loading, error, data, generate } = useAiTool<{ items: any[] }>({
         systemPrompt,
