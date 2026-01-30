@@ -18,9 +18,6 @@ export const metadata: Metadata = {
   title: 'AI Tools for College Projects | Free Student Helpers',
   description:
     'Free AI-powered tools for college students. Generate project ideas, abstracts, and PPT outlines instantly with our AI tools.',
-  verification: {
-    google: 'googlea39ab1259482cff2',
-  },
 };
 
 export default function RootLayout({
@@ -31,6 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* ✅ Google Search Console Verification */}
+        <meta
+          name="google-site-verification"
+          content="googlea39ab1259482cff2"
+        />
+
+        {/* ✅ Google AdSense Base Script */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5392572008112828"
