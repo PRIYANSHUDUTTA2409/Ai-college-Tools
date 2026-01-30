@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  lastLogin DateTime?
+  usageCount Int      @default(0)
+  isVerified Boolean  @default(false)
+  otp        String?
+  otpExpiresAt DateTime?
+  password   String?
+}
+
+model SearchLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String?
+  tool      String
+  query     String
+  createdAt DateTime @default(now())
+}
+
+model UsageStat {
+  id        String   @id @default(cuid())
+  userId    String?
+  tool      String
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Content {
+  id        String   @id @default(cuid())
+  type      String   // "blog" | "vlog"
+  title     String
+  slug      String   @unique
+  content   String   // Markdown content or URL for vlogs
+  createdAt DateTime @default(now())
+}

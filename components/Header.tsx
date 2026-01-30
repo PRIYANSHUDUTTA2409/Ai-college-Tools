@@ -46,7 +46,7 @@ export function Header() {
                     ))}
                     <div className="pl-2 flex items-center gap-2">
                         <Button variant="ghost" className="hidden lg:inline-flex rounded-full text-muted-foreground hover:text-primary hover:bg-secondary/50" asChild>
-                            <Link href="/login">Login</Link>
+                            <Link href="/login">Sign In</Link>
                         </Button>
                         <Button asChild className="hidden lg:inline-flex bg-primary hover:bg-primary/90 text-white rounded-full px-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
                             <Link href="/ideas">Get Started</Link>
@@ -80,7 +80,7 @@ export function Header() {
                         ))}
                         <div className="pt-2 flex flex-col gap-2">
                             <Button variant="ghost" className="w-full rounded-full justify-start px-4" asChild>
-                                <Link href="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                                <Link href="/login" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
                             </Button>
                             <Button asChild className="w-full rounded-full">
                                 <Link href="/ideas" onClick={() => setIsMenuOpen(false)}>Get Started</Link>

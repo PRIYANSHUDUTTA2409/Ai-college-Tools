@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Degree = 'B.Tech' | 'BCA' | 'MCA' | 'Diploma' | 'Other';
+type Degree = 'B.Tech' | 'BCA' | 'MCA' | 'M.Tech' | 'M.Sc' | 'Diploma' | 'Other';
 type Branch = 'CSE' | 'ISE' | 'ECE' | 'EEE' | 'Mech' | 'Civil' | 'Other';
 
 interface UserProfile {
@@ -14,7 +14,7 @@ interface UserProfile {
 
 interface UserContextType {
     user: UserProfile;
-    login: (email: string) => Promise<boolean>;
+    login: (email: string, password?: string, isNewUser?: boolean) => Promise<boolean>;
     logout: () => void;
     updateProfile: (degree: Degree, branch: Branch) => void;
     isLoading: boolean;
@@ -51,17 +51,30 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }
     }, [user]);
 
-    const login = async (email: string) => {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    const login = async (email: string, password?: string, isNewUser?: boolean) => {
+        try {
+            const endpoint = isNewUser ? '/api/auth/register' : '/api/auth/login';
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
 
-        // For now, auto-login with just email (simulating verified OTP)
-        setUser(prev => ({
-            ...prev,
-            email,
-            isLoggedIn: true
-        }));
-        return true;
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Authentication failed');
+            }
+
+            setUser({
+                ...data.user,
+                isLoggedIn: true
+            });
+            return true;
+        } catch (error) {
+            console.error('Auth error:', error);
+            throw error;
+        }
     };
 
     const logout = () => {

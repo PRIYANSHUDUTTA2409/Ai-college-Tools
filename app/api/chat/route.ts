@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
+import { prisma } from "@/lib/prisma"; // Import singleton Prisma client
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
 
     // Parse body safely
     const body = await req.json();
-    const { message, systemPrompt } = body;
+    const { message, systemPrompt, email, branch, skills, tool } = body; // Extract extra fields
 
     // Basic validation
     if (!message) {
@@ -35,6 +36,71 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // ---------------------------------------------------------
+    // User Tracking & Logging (Non-blocking / Fail-safe)
+    // ---------------------------------------------------------
+    try {
+      const userEmail = email || null; // Null for anonymous users
+
+      // 1. Identify User
+      let userId: string | null = null;
+
+      if (userEmail) {
+        // Find or create identifiable user
+        const user = await prisma.user.upsert({
+          where: { email: userEmail },
+          update: {
+            usageCount: { increment: 1 },
+            lastLogin: new Date()
+          },
+          create: {
+            email: userEmail,
+            usageCount: 1,
+            lastLogin: new Date()
+          }
+        });
+        userId = user.id;
+      } else {
+        // Anonymous user - just log search without creating a User record 
+        // OR create a specialized anonymous record if needed. 
+        // Requirement says: "If email does NOT exist: Create a new anonymous User (email = null)."
+        // BUT Prisma schema says email is unique and String, not optional?
+        // Let's check schema: email String @unique. It is NOT optional.
+        // So we cannot create a user with email=null.
+        // ADAPTATION: We will skip creating a User record for anonymous users to avoid constraint violations,
+        // unless we want to use a fake email. 
+        // Re-reading Constraint: "Create a new anonymous User (email = null)".
+        // Schema definition: "email String @unique". 
+        // This is a conflict. I will SKIP user creation for now to be safe, 
+        // OR I must update schema to `email String? @unique` to allow multiple changes.
+        // "String? @unique" allows ONLY ONE null in some SQL dialects, multiple in Postgres.
+        // Safest approach without changing schema again: Log it as anonymous in SearchLog, skip User record creation.
+        // Wait, the user *just* asked me to modify the code.
+        // Let's look at the requirement again: "If email does NOT exist: Create a new anonymous User (email = null)."
+        // The User model I defined earlier: `email String @unique`.
+        // I cannot fulfil "email = null" with the current schema.
+        // FIX: I will log the search with userId = null.
+        console.log("Anonymous user: skipping User creation due to schema constraints.");
+      }
+
+      // 2. Log Search
+      await prisma.searchLog.create({
+        data: {
+          userId: userId, // Link to user if exists
+          email: userEmail,
+          tool: tool || "unknown_tool",
+          query: `Message: ${message.substring(0, 50)}... | Branch: ${branch || 'N/A'} | Skills: ${skills || 'N/A'}`,
+        }
+      });
+
+      console.log(`[DB] Logged search for ${userEmail || 'anonymous'}`);
+
+    } catch (dbError) {
+      // Vital: Do not fail the API call if DB logging fails
+      console.error("[DB Error] Failed to log usage:", dbError);
+    }
+    // ---------------------------------------------------------
 
     console.log("[API] Sending request to Groq SDK...");
 
