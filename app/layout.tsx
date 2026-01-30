@@ -8,6 +8,7 @@ import { Analytics } from '@/components/Analytics';
 import { CookieConsent } from '@/components/CookieConsent';
 import { UserProvider } from '@/contexts/UserContext';
 import { OnboardingModal } from '@/components/OnboardingModal';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5392572008112828"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <UserProvider>
           <Suspense fallback={null}>
             <Analytics />
