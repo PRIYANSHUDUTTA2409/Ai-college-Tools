@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: 'AI Tools for College Projects | Free Student Helpers',
   description:
     'Free AI-powered tools for college students. Generate project ideas, abstracts, and PPT outlines instantly with our AI tools.',
+  verification: {
+    google: 'googlea39ab1259482cff2',
+  },
 };
 
 export default function RootLayout({
