@@ -28,13 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* ✅ Google Search Console Verification */}
         <meta
           name="google-site-verification"
-          content="googlea39ab1259482cff2"
+          content="QOlXjeZ5KAPHMzFf9ZFeJ5YXSZ0kQHT1F_8af85H66M"
         />
 
-        {/* ✅ Google AdSense Base Script */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5392572008112828"
